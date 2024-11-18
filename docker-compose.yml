@@ -12,7 +12,7 @@ services:
     networks:
       - overlay-net
     ports:
-      - 8080:8080
+      - 8080:80
 
 networks:
     overlay-net:
