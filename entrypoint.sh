@@ -1,0 +1,12 @@
+#!/bin/sh
+cat <<EOF > /usr/share/nginx/html/config.json
+{
+  "VITE_INFLUXDB_URL": "${VITE_INFLUXDB_URL}",
+  "VITE_INFLUXDB_TOKEN": "${VITE_INFLUXDB_TOKEN}",
+  "VITE_INFLUXDB_ORG": "${VITE_INFLUXDB_ORG}",
+  "VITE_INFLUXDB_BUCKET": "${VITE_INFLUXDB_BUCKET}",
+  "VITE_RUUVI_SERIAL": "${VITE_RUUVI_SERIAL}"
+}
+EOF
+
+exec "$@"

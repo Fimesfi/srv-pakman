@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Kopioidaan package.json ja package-lock.json (tai pnpm-lock.yaml / yarn.lock)
 COPY package*.json ./
-
+COPY ./entrypoint.sh /entrypoint.sh
 # Asennetaan riippuvuudet
 RUN npm install
 
@@ -15,6 +15,8 @@ COPY . .
 
 # Buildataan Vite-sovellus
 RUN npm run build
+
+RUN chmod +x /entrypoint.sh
 
 # Vaihe 2: Käytetään Nginxiä ja kopioidaan build-tiedostot
 FROM nginx:alpine
@@ -28,5 +30,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Avaa Nginx-palvelin perusportilla (80)
 EXPOSE 80
 
+ENTRYPOINT ["/entrypoint.sh"]
 # Käynnistetään Nginx
 CMD ["nginx", "-g", "daemon off;"]

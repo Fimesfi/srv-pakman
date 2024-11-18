@@ -5,15 +5,32 @@ import { InfluxDB } from '@influxdata/influxdb-client';
 import logo from './assets/logo_dark.svg';
 
 function App() {
+
+    const [env, setEnv] = useState(null);
+
+    useEffect(() => {
+        fetch('/config.json')
+            .then((response) => response.json())
+            .then((config) => setEnv(config))
+            .catch((error) => console.error("Failed to fetch config:", error));
+    }, []);
+
+    if (!env) {
+        return <p>Loading configuration...</p>;
+    }
+    const { VITE_INFLUXDB_URL, VITE_INFLUXDB_TOKEN, VITE_INFLUXDB_ORG, VITE_INFLUXDB_BUCKET, VITE_RUUVI_SERIAL } = env;
+    // Use these values in your application logic
+    //console.log(VITE_INFLUXDB_URL, VITE_INFLUXDB_TOKEN);
     const [data, setData] = useState([]);
     const [latestTemperature, setLatestTemperature] = useState(null);
     const [latestHumidity, setLatestHumidity] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const token = import.meta.env.VITE_INFLUXDB_TOKEN;
-    const url = import.meta.env.VITE_INFLUXDB_URL;
-    const org = import.meta.env.VITE_INFLUXDB_ORG;
-    const bucket = import.meta.env.VITE_INFLUXDB_BUCKET;
+
+    const token = env.VITE_INFLUXDB_TOKEN;
+    const url = env.VITE_INFLUXDB_URL;
+    const org = env.VITE_INFLUXDB_ORG;
+    const bucket = env.VITE_INFLUXDB_BUCKET;
 
     useEffect(() => {
         setLoading(true);
@@ -24,7 +41,7 @@ function App() {
       from(bucket: "${bucket}")
         |> range(start: -1d)
         |> filter(fn: (r) => r._measurement == "ruuvi_measurements")
-        |> filter(fn: (r) => r.mac == "${import.meta.env.VITE_RUUVI_SERIAL}")
+        |> filter(fn: (r) => r.mac == "${env.VITE_RUUVI_SERIAL}")
         |> filter(fn: (r) => r._field == "temperature")
         |> aggregateWindow(every: 10m, fn: mean)
         |> yield(name: "mean")
@@ -34,7 +51,7 @@ function App() {
           from(bucket: "${bucket}")
             |> range(start: -1h)
             |> filter(fn: (r) => r._measurement == "ruuvi_measurements")
-            |> filter(fn: (r) => r.mac == "${import.meta.env.VITE_RUUVI_SERIAL}")
+            |> filter(fn: (r) => r.mac == "${env.VITE_RUUVI_SERIAL}")
             |> filter(fn: (r) => r._field == "temperature" or r._field == "humidity")
             |> last()
         `;
