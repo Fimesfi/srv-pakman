@@ -1,12 +1,12 @@
 # Vaihe 1: Buildataan Vite-sovellus
 FROM node:18 AS build
-
+COPY ./entrypoint.sh /entrypoint.sh
 # Asetetaan työskentelyhakemisto
 WORKDIR /app
 
 # Kopioidaan package.json ja package-lock.json (tai pnpm-lock.yaml / yarn.lock)
 COPY package*.json ./
-COPY ./entrypoint.sh /entrypoint.sh
+
 # Asennetaan riippuvuudet
 RUN npm install
 
