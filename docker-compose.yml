@@ -3,13 +3,16 @@ services:
     build:
         context: .
         dockerfile: Dockerfile
+    environment:
+      - VITE_RUUVI_SERIAL=${VITE_RUUVI_SERIAL}
+      - VITE_INFLUXDB_BUCKET=${VITE_INFLUXDB_BUCKET}
+      - VITE_INFLUXDB_ORG=${VITE_INFLUXDB_ORG}
+      - VITE_INFLUXDB_URL=${VITE_INFLUXDB_URL}
+      - VITE_INFLUXDB_TOKEN=${VITE_INFLUXDB_TOKEN}
     networks:
       - overlay-net
     ports:
       - 8080:8080
-    env_file:
-      - .env
-      - stack.env
 
 networks:
     overlay-net:
