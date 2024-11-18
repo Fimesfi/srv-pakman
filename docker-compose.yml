@@ -1,0 +1,17 @@
+services:
+  srv-pakman:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    networks:
+      - overlay-net
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+      - stack.env
+
+networks:
+    overlay-net:
+        external: true
+        name: overlay-net
